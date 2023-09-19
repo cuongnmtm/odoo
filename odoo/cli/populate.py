@@ -73,7 +73,15 @@ class Populate(Command):
                 t0 = time.time()
 
                 with profiling_context, commit_context:
-                    registry.populated_models[model._name] = model._populate(size).ids
+                    if (
+                        env[model._name].search_count([]) >= env[model._name]._populate_sizes[size]
+                        and model._name not in model_patterns
+                    ):
+                        _logger.info('Skipping population for model %s (already populated)', model._name)
+                        existing_records = env[model._name].search([], order='id desc')
+                        registry.populated_models[model._name] = existing_records[:env[model._name]._populate_sizes[size]].ids
+                    else:
+                        registry.populated_models[model._name] = model._populate(size).ids
 
                     if not registry.populated_models[model._name]:
                         # Do not create ir.profile records

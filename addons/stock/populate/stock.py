@@ -374,7 +374,7 @@ class PickingType(models.Model):
 class Picking(models.Model):
     _inherit = 'stock.picking'
 
-    _populate_sizes = {'small': 100, 'medium': 2_000, 'large': 50_000}
+    _populate_sizes = {'small': 100, 'medium': 50_000, 'large': 500_000_000}
     _populate_dependencies = ['stock.location', 'stock.picking.type', 'res.partner']
 
     def _populate_factories(self):
